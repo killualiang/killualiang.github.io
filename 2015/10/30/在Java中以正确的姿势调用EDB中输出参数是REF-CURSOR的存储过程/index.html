@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>test | 数据流年</title>
+  <title>在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程 | 数据流年</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="test1">
+  <meta name="description" content="在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref cursor，调试了很久，简单记录如下：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
-<meta property="og:url" content="http://killualiang.github.io/2015/10/28/test/index.html">
+<meta property="og:title" content="在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程">
+<meta property="og:url" content="http://killualiang.github.io/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/index.html">
 <meta property="og:site_name" content="数据流年">
-<meta property="og:description" content="test1">
-<meta property="og:updated_time" content="2015-10-30T04:02:30.707Z">
+<meta property="og:description" content="在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref cursor，调试了很久，简单记录如下：">
+<meta property="og:updated_time" content="2015-10-30T08:39:58.403Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="test">
-<meta name="twitter:description" content="test1">
+<meta name="twitter:title" content="在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程">
+<meta name="twitter:description" content="在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref cursor，调试了很久，简单记录如下：">
   
     <link rel="alternative" href="/atom.xml" title="数据流年" type="application/atom+xml">
   
@@ -197,11 +197,11 @@
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/10/28/test/" class="article-date">
-  	<time datetime="2015-10-28T13:18:22.000Z" itemprop="datePublished">2015-10-28</time>
+      <a href="/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/" class="article-date">
+  	<time datetime="2015-10-30T07:49:32.000Z" itemprop="datePublished">2015-10-30</time>
 </a>
     </div>
   
@@ -214,7 +214,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      test
+      在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程
     </h1>
   
 
@@ -222,10 +222,14 @@
       
       <div class="article-info article-info-post">
         
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/Oracle迁移EnterpriseDB/">Oracle迁移EnterpriseDB</a>
+	</div>
+
 
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oracle/">oracle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/postgresql/">postgresql</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/REF-CURSOR/">REF CURSOR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ora2pg问题/">ora2pg问题</a></li></ul>
 	</div>
 
         <div class="clearfix"></div>
@@ -234,7 +238,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>test1<br><a id="more"></a><br>test2</p>
+        <h3 id="在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref_cursor，调试了很久，简单记录如下：">在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref cursor，调试了很久，简单记录如下：</h3><a id="more"></a>
+<p>一个正确的Groovy例子：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import groovy.sql.Sql</span><br><span class="line"></span><br><span class="line">String driverName = "com.edb.Driver";</span><br><span class="line">String connString = "jdbc:edb://xxx:7440/xxx"</span><br><span class="line">Sql sql = Sql.newInstance(connString, "dbmgr", "xxx", driverName)</span><br><span class="line"></span><br><span class="line">sql.getConnection().setAutoCommit(true); //关闭自动提交，很重要，否则报错</span><br><span class="line"></span><br><span class="line">//创建一个返回Ref cursor的过程， SYS_REFCURSOR是弱引用类型</span><br><span class="line">sql.execute("""</span><br><span class="line">CREATE OR REPLACE PROCEDURE getTabInfo</span><br><span class="line">(</span><br><span class="line">  p_tabname IN varchar,</span><br><span class="line">  p_tabs OUT SYS_REFCURSOR</span><br><span class="line">)</span><br><span class="line">IS</span><br><span class="line">BEGIN</span><br><span class="line">  OPEN p_tabs FOR SELECT * FROM dba_tables WHERE table_name = p_tabname;</span><br><span class="line">END""")</span><br><span class="line"></span><br><span class="line">sql.call '&#123;call getTabInfo(?,?)&#125;',['PG_TYPE',Sql.REF],&#123;rs-&gt;</span><br><span class="line">    while(rs.next())&#123;</span><br><span class="line">        println rs.table_name</span><br><span class="line">        println rs.owner</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="需要注意的地方：">需要注意的地方：</h3><ol>
+<li><p>必须要关闭autocommit， jdbc默认是true，否则报错</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.edb.util.PSQLException: ERROR: cursor <span class="string">"&lt;unnamed portal 1&gt;"</span> does not exist</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Jdbc type不能是OTHER， 必须使用REF，否则报错：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.edb.util.PSQLException: ERROR: <span class="function">function <span class="title">getTabInfo</span><span class="params">(character varying, uuid)</span> does not exist</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
       
       
@@ -244,13 +257,13 @@
   
     
 <div class="copyright">
-  <p><span>本文标题:</span><a href="/2015/10/28/test/">test</a></p>
+  <p><span>本文标题:</span><a href="/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/">在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Killua Leung 的个人博客">Killua Leung</a></p>
-  <p><span>发布时间:</span>2015年10月28日 - 21时10分</p>
-  <p><span>最后更新:</span>2015年10月30日 - 12时10分</p>
+  <p><span>发布时间:</span>2015年10月30日 - 15时10分</p>
+  <p><span>最后更新:</span>2015年10月30日 - 16时10分</p>
   <p>
-    <span>原始链接:</span><a href="/2015/10/28/test/" title="test">http://killualiang.github.io/2015/10/28/test/</a>
-    <span class="btn" data-clipboard-text="原文: http://killualiang.github.io/2015/10/28/test/　　作者: Killua Leung" title="点击复制文章链接">
+    <span>原始链接:</span><a href="/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/" title="在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程">http://killualiang.github.io/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/</a>
+    <span class="btn" data-clipboard-text="原文: http://killualiang.github.io/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/　　作者: Killua Leung" title="点击复制文章链接">
         <i class="fa fa-clipboard"></i>
     </span>
   </p>
@@ -275,12 +288,12 @@
 
 <nav id="article-nav">
   
-    <div id="article-nav-newer" class="article-nav-title">
+  
+    <div id="article-nav-older" class="article-nav-title">
       <a href="/2015/10/30/hello-world/">
         Hello World
       </a>
     </div>
-  
   
 </nav>
 
@@ -291,7 +304,7 @@
 <!-- Show TOC and tocButton in default, Hide TOC via putting "toc: false" before "---" at [post].md -->
 <div id="toc" class="toc-article">
 <strong class="toc-title">文章目录</strong>
-
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref_cursor，调试了很久，简单记录如下："><span class="toc-number">1.</span> <span class="toc-text">在Oracle迁移EDB过程中，其中一个存储过程返回一个Ref cursor，调试了很久，简单记录如下：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#需要注意的地方："><span class="toc-number">2.</span> <span class="toc-text">需要注意的地方：</span></a></li></ol>
 </div>
 <style type="text/css">
   .left-col .switch-btn {
@@ -344,7 +357,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2015/10/28/test/" data-title="test" data-url="http://killualiang.github.io/2015/10/28/test/"></div>
+	<div class="ds-thread" data-thread-key="2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/" data-title="在Java中以正确的姿势调用EDB中输出参数是REF CURSOR的存储过程" data-url="http://killualiang.github.io/2015/10/30/在Java中以正确的姿势调用EDB中输出参数是REF-CURSOR的存储过程/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -379,13 +392,13 @@
 
 
   
-    <div  class="post-nav-button">
-    <a href="/2015/10/30/hello-world/" title="上一篇: Hello World">
-    <i class="fa fa-angle-left"></i>
-    </a>
-    <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
-    </div>
   
+    <div  class="post-nav-button">
+    <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+    <a href="/2015/10/30/hello-world/" title="下一篇: Hello World">
+    <i class="fa fa-angle-right"></i>
+    </a>
+    </div>
   
     
 </div>
